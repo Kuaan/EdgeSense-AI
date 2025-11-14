@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.pyc
+env/
+venv/
+.env
+
+# PlatformIO / Arduino
+/.pio/
+.build/
+*.elf
+*.bin
+
+# Keil / STM32
+*.axf
+*.hex
+*.o
+
+# VS Code
+.vscode/
+
+# Logs
+*.log
