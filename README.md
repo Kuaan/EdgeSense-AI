@@ -29,36 +29,36 @@ Industrial-grade layered architecture (Device → Protocol → Security → Mana
 This project demonstrates complete embedded system engineering capabilities—from hardware, protocols, and security to device management, edge AI, and gateway design.
 
 📦 System Architecture
- +-------------------------------------------------------------------+
- |                   Web Dashboard (Flask / Bootstrap)               |
- |   - Device List / Sensors / Logs                                  |
- |   - OTA Upload & Control                                           |
- |   - Key Exchange / Authentication                                 |
- |   - Live Telemetry (WebSocket)                                    |
- +-----------------------------+-------------------------------------+
-                               |
-                          HTTPS / REST
-                               |
-                     +---------+----------+
-                     | Raspberry Pi 4B    |  <-- Edge Gateway
-                     | - Redfish-style API|
-                     | - Device Registry  |
-                     | - Secure Key Mgmt  |
-                     | - MQTT / LoRa Hub  |
-                     +---------+----------+
-                               |
-      +-------------+-----------+------------+------------------+
-      |             |           |            |                  |
-     BLE        WiFi MQTT     LoRa        UART RS485         UWB
-      |             |           |            |                  |
-+-----+----+   +----+------+ +--+----+  +----+-----+      +----+------+
-|ESP32-BLE|   |ESP32 Node | |LoRa Node| |STM32 RTOS|      |ESP32 UWB  |
-+---------+   +-----------+ +---------+ +----------+      +-----------+
-                      |
-               +---------------+
-               | ESP32-S3 CAM  |
-               |  Edge AI      |
-               +---------------+
+ +-------------------------------------------------------------------+ <br>
+ |                   Web Dashboard (Flask / Bootstrap)               |<br>
+ |   - Device List / Sensors / Logs                                  |<br>
+ |   - OTA Upload & Control                                          |<br>
+ |   - Key Exchange / Authentication                                 |<br>
+ |   - Live Telemetry (WebSocket)                                    |<br>
+ +-----------------------------+-------------------------------------+<br>
+                               |<br>
+                          HTTPS / REST<br>
+                               |<br>
+                     +---------+----------+<br>
+                     | Raspberry Pi 4B    |  <-- Edge Gateway<br>
+                     | - Redfish-style API|<br>
+                     | - Device Registry  |<br>
+                     | - Secure Key Mgmt  |<br>
+                     | - MQTT / LoRa Hub  |<br>
+                     +---------+----------+<br>
+                               |<br>
+      +-------------+----------+-------------+------------------+<br>
+      |             |           |            |                  |<br>
+     BLE        WiFi MQTT     LoRa        UART RS485           UWB<br>
+      |             |           |            |                  |<br>
++-----+----+  +----+------+ +---+-----+ +----+-----+      +----+------+<br>
+|ESP32-BLE|   |ESP32 Node | |LoRa Node| |STM32 RTOS|      |ESP32 UWB  |<br>
++---------+   +-----------+ +---------+ +----------+      +-----------+<br>
+                      |<br>
+               +---------------+<br>
+               | ESP32-S3 CAM  |<br>
+               |  Edge AI      |<br>
+               +---------------+<br>
 
 🔧 Hardware Used
 
@@ -177,55 +177,55 @@ Bootstrap
 
 Plotly
 
-📁 Project Structure
-EdgeSense-AI/
+📁 Project Structure<br>
+EdgeSense-AI/<br>
+│<br>
+├── gateway/                   # Raspberry Pi Gateway<br>
+│   ├── api/<br>
+│   │   ├── redfish.py         # REST API<br>
+│   │   ├── security.py        # Key mgmt, DH, tokens<br>
+│   │   ├── ota.py             # OTA orchestrator<br>
+│   │   └── registry.py        # Device database<br>
+│   ├── web/<br>
+│   │   ├── templates/<br>
+│   │   ├── static/<br>
+│   │   └── dashboard.py<br>
+│   ├── mqtt/<br>
+│   ├── lora/<br>
+│   └── run_gateway.py<br>
+│<br>
+├── stm32_rtOS/<br>
+│   ├── Core/<br>
+│   ├── Drivers/<br>
+│   ├── FreeRTOS/<br>
+│   └── app/<br>
+│       ├── sensor_task.c<br>
+│       ├── comm_task.c<br>
+│       └── security.c<br>
+│<br>
+├── esp32_nodes/<br>
+│   ├── wifi_node/<br>
+│   ├── ble_node/<br>
+│   ├── lora_node/<br>
+│   └── uart_bridge/<br>
 │
-├── gateway/                   # Raspberry Pi Gateway
-│   ├── api/
-│   │   ├── redfish.py         # REST API
-│   │   ├── security.py        # Key mgmt, DH, tokens
-│   │   ├── ota.py             # OTA orchestrator
-│   │   └── registry.py        # Device database
-│   ├── web/
-│   │   ├── templates/
-│   │   ├── static/
-│   │   └── dashboard.py
-│   ├── mqtt/
-│   ├── lora/
-│   └── run_gateway.py
-│
-├── stm32_rtOS/
-│   ├── Core/
-│   ├── Drivers/
-│   ├── FreeRTOS/
-│   └── app/
-│       ├── sensor_task.c
-│       ├── comm_task.c
-│       └── security.c
-│
-├── esp32_nodes/
-│   ├── wifi_node/
-│   ├── ble_node/
-│   ├── lora_node/
-│   └── uart_bridge/
-│
-├── esp32s3_ai/
-│   ├── camera_stream/
-│   ├── tflite_micro/
-│   └── ai_inference/
-│
-├── common/
-│   ├── protocol_tlv.h
-│   ├── crypto/
-│   └── utils/
-│
-├── docs/
-│   ├── architecture.md
-│   ├── protocol.md
-│   ├── ota_flow.md
-│   └── security_design.md
-│
-└── README.md
+├── esp32s3_ai/<br>
+│   ├── camera_stream/<br>
+│   ├── tflite_micro/<br>
+│   └── ai_inference/<br>
+│<br>
+├── common/<br>
+│   ├── protocol_tlv.h<br>
+│   ├── crypto/<br>
+│   └── utils/<br>
+│<br>
+├── docs/<br>
+│   ├── architecture.md<br>
+│   ├── protocol.md<br>
+│   ├── ota_flow.md<br>
+│   └── security_design.md<br>
+│<br>
+└── README.md<br>
 
 🛠 Setup Guide
 1. Raspberry Pi (Gateway)
