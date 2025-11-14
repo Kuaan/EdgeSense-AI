@@ -1,5 +1,7 @@
 🛰️ EdgeSense-AI
+
 Intelligent Secure Edge Device Management System
+
 (Edge AI · BMC-style Management · FreeRTOS · Multi-Protocol Communication · Cybersecurity · OTA)
 
 📌 Overview
