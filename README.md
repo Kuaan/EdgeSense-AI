@@ -177,6 +177,7 @@ Bootstrap
 
 Plotly
 
+
 📁 Project Structure<br>
 EdgeSense-AI/<br>
 │<br>
