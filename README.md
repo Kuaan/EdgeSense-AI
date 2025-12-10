@@ -5,7 +5,7 @@ Intelligent Secure Edge Device Management System
 (Edge AI · BMC-style Management · FreeRTOS · Multi-Protocol Communication · Cybersecurity · OTA)
 
    
-  
+   
 📌 Overview
 
 EdgeSense-AI is a secure and intelligent edge device management platform built with Raspberry Pi, STM32, ESP32, and ESP32-S3.
