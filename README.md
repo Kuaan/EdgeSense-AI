@@ -7,6 +7,7 @@ Intelligent Secure Edge Device Management System
 
  
  
+ 
 📌 Overview
 
 EdgeSense-AI is a secure and intelligent edge device management platform built with Raspberry Pi, STM32, ESP32, and ESP32-S3.
