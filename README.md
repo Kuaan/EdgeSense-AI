@@ -7,13 +7,13 @@ Intelligent Secure Edge Device Management System
 
 
 📌 Phase 0
-Raspberry Pi 4B
-│
-├── FastAPI (Device Management API)
-├── Device Registry (in-memory → SQLite)
-├── System Info (CPU / RAM / Disk)
-├── Web UI (simply HTML)
-└── GitHub-ready project structure
+Raspberry Pi 4B <br>
+│<br>
+├── FastAPI (Device Management API)<br>
+├── Device Registry (in-memory → SQLite)<br>
+├── System Info (CPU / RAM / Disk)<br>
+├── Web UI (simply HTML)<br>
+└── GitHub-ready project structure<br>
 
 
 📌 Phase 1
