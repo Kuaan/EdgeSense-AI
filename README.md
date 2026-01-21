@@ -23,7 +23,18 @@ Raspberry Pi 4B <br>
  pass;
  
 📌 Phase 3
- pass;
+ Gateway<br>
+ ├─ POST /ota/jobs            (establish OTA task)<br>
+ ├─ GET  /ota/firmware/{ver}  (ESP32 download bin)<br>
+ └─ MQTT publish:<br>
+      devices/{id}/ota<br>
+
+ESP32<br>
+ ├─ subscribe devices/{id}/ota<br>
+ ├─ receive → HTTP GET firmware<br>
+ ├─ OTA<br>
+ └─ MQTT report<br>
+
 
 📌 Phase 4
  pass;
