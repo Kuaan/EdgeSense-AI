@@ -5,9 +5,8 @@ Intelligent Secure Edge Device Management System
 (Edge AI · BMC-style Management · FreeRTOS · Multi-Protocol Communication · Cybersecurity · OTA)
 
 
-📌 Phase 0
+📌 Phase 0<br>
 Raspberry Pi 4B <br>
-│<br>
 ├── FastAPI (Device Management API)<br>
 ├── Device Registry (in-memory → SQLite)<br>
 ├── System Info (CPU / RAM / Disk)<br>
@@ -22,7 +21,7 @@ Raspberry Pi 4B <br>
 📌 Phase 2
  pass;
  
-📌 Phase 3
+📌 Phase 3<br>
  Gateway<br>
  ├─ POST /ota/jobs            (establish OTA task)<br>
  ├─ GET  /ota/firmware/{ver}  (ESP32 download bin)<br>
