@@ -1,10 +1,12 @@
+from datetime import datetime
 from pydantic import BaseModel
-from typing import Optional
+from typing import Literal
+
 
 class Device(BaseModel):
-    device_id: str
-    device_type: str
-    protocol: str
-    firmware_version: Optional[str] = None
-    status: str = "offline"
+    id: str
+    type: str
+    status: Literal["online", "offline", "stale"] = "offline"
+    last_seen: datetime | None = None
+    heartbeat_interval: int = 10  # seconds
 
