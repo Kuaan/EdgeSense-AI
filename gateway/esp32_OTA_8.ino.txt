@@ -9,8 +9,8 @@
 String version = "v8.0.0";
 
 /* ================= USER CONFIG ================= */
-const char* WIFI_SSID = "Ang";
-const char* WIFI_PASS = "22560540";
+const char* WIFI_SSID = "";
+const char* WIFI_PASS = "";
 const char* GATEWAY_HOST = "172.20.10.4";
 const int   GATEWAY_HTTP_PORT = 8000;
 const int   MQTT_PORT = 1883;
