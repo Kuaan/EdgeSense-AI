@@ -1,0 +1,279 @@
+#include <WiFi.h>
+#include <HTTPClient.h>
+#include <PubSubClient.h>
+#include <ArduinoJson.h>
+#include <Update.h>
+#include <mbedtls/md5.h>
+
+/* ================= FACTORY LOADER ================= */
+String version = "v8.0.0";
+
+/* ================= USER CONFIG ================= */
+const char* WIFI_SSID = "Ang";
+const char* WIFI_PASS = "22560540";
+const char* GATEWAY_HOST = "172.20.10.4";
+const int   GATEWAY_HTTP_PORT = 8000;
+const int   MQTT_PORT = 1883;
+
+/* ================= DEVICE ================= */
+String DEVICE_UID;
+#define DEVICE_TYPE "esp32"
+
+/* ================= GLOBAL ================= */
+WiFiClient wifiClient;
+PubSubClient mqttClient(wifiClient);
+StaticJsonDocument<512> doc;
+
+bool ota_in_progress = false;
+static unsigned long lastHb = 0;
+static unsigned long lastLed = 0;
+static bool ledState = false;
+
+/* ================= OTA STATUS ================= */
+void reportOtaStatus(const char* status, const char* version = nullptr) {
+    String topic = "devices/" + DEVICE_UID + "/ota_status";
+
+    StaticJsonDocument<256> statusDoc;
+    statusDoc["status"] = status;
+    if (version) statusDoc["fw_version"] = version;
+    statusDoc["ts"] = millis() / 1000;
+
+    char buffer[256];
+    size_t n = serializeJson(statusDoc, buffer);
+    mqttClient.publish(topic.c_str(), (const uint8_t*)buffer, n, true);
+
+    Serial.printf("[OTA Status] %s\n", buffer);
+}
+
+/* ================= OTA ================= */
+bool checkMd5(const char* url, const char* expectedMd5) {
+    HTTPClient http;
+    http.setTimeout(30000);
+    http.begin(url);
+
+    int code = http.GET();
+    if (code != 200) {
+        Serial.printf("[MD5] HTTP GET failed, code=%d\n", code);
+        http.end();
+        return false;
+    }
+
+    int len = http.getSize();
+    WiFiClient* stream = http.getStreamPtr();
+    const size_t chunkSize = 4096;
+    uint8_t buf[chunkSize];
+    size_t readBytes = 0;
+
+    mbedtls_md5_context ctx;
+    mbedtls_md5_init(&ctx);
+    mbedtls_md5_starts(&ctx);
+
+    while (http.connected() && readBytes < len) {
+        int toRead = min(chunkSize, len - readBytes);
+        int r = stream->readBytes(buf, toRead);
+        if (r <= 0) break;
+
+        readBytes += r;
+        mbedtls_md5_update(&ctx, buf, r);
+    }
+
+    unsigned char md5_result[16];
+    mbedtls_md5_finish(&ctx, md5_result);
+    mbedtls_md5_free(&ctx);
+
+    http.end();
+
+    char md5Str[33];
+    for (int i = 0; i < 16; i++) sprintf(md5Str + i*2, "%02X", md5_result[i]);
+
+    Serial.printf("[MD5] Calculated: %s\n", md5Str);
+
+    for (int i = 0; i < 32; i++) {
+        if (toupper(md5Str[i]) != toupper(expectedMd5[i])) {
+            Serial.println("[MD5] Mismatch!");
+            return false;
+        }
+    }
+    Serial.println("[MD5] OK");
+    return true;
+}
+
+void onOtaMessage(char* topic, byte* payload, unsigned int length) {
+    if (ota_in_progress) {
+        Serial.println("[OTA] Already running");
+        return;
+    }
+    ota_in_progress = true;
+
+    DeserializationError err = deserializeJson(doc, payload, length);
+    if (err) {
+        Serial.println("[OTA] JSON parse failed");
+        reportOtaStatus("failed");
+        ota_in_progress = false;
+        return;
+    }
+
+    const char* url = doc["url"];
+    const char* version = doc["version"];
+    const char* md5 = doc["md5"];  // 新增 MD5 欄位
+    if (!url || !version || !md5) {
+        Serial.println("[OTA] Missing URL/version/md5");
+        reportOtaStatus("failed", version);
+        ota_in_progress = false;
+        return;
+    }
+
+    reportOtaStatus("downloading", version);
+
+    // Step1: 檢查 MD5
+    if (!checkMd5(url, md5)) {
+        reportOtaStatus("failed", version);
+        ota_in_progress = false;
+        return;
+    }
+
+    reportOtaStatus("flashing", version);
+
+    // Step2: 真正 OTA
+    WiFiClient client;
+    HTTPClient http;
+    http.setTimeout(30000);
+    http.begin(client, url);
+
+    int code = http.GET();
+    if (code != 200) {
+        Serial.println("[OTA] HTTP failed");
+        reportOtaStatus("failed", version);
+        http.end();
+        ota_in_progress = false;
+        return;
+    }
+
+    int contentLength = http.getSize();
+    if (!Update.begin(contentLength)) {
+        Serial.println("[OTA] Update begin failed");
+        reportOtaStatus("failed", version);
+        http.end();
+        ota_in_progress = false;
+        return;
+    }
+
+    size_t written = Update.writeStream(*http.getStreamPtr());
+    if (written != contentLength) Serial.println("[OTA] Write incomplete");
+
+    if (Update.end() && Update.isFinished()) {
+        reportOtaStatus("success", version);
+        Serial.println("[OTA] Success → reboot");
+        delay(500);
+        ESP.restart();
+    } else {
+        reportOtaStatus("failed", version);
+        Serial.println("[OTA] Failed (loader still alive)");
+    }
+
+    http.end();
+    ota_in_progress = false;
+}
+
+/* ================= WIFI ================= */
+void connectWiFi() {
+    WiFi.begin(WIFI_SSID, WIFI_PASS);
+    while (WiFi.status() != WL_CONNECTED) delay(500);
+    Serial.println("[WiFi] Connected");
+}
+
+/* ================= HTTP REGISTER ================= */
+void httpProvision() {
+    HTTPClient http;
+    String url = String("http://") + GATEWAY_HOST + ":" + GATEWAY_HTTP_PORT + "/devices/register";
+    http.begin(url);
+    http.addHeader("Content-Type", "application/json");
+
+    String payload =
+      "{"
+      "\"uid\":\"" + DEVICE_UID + "\"," 
+      "\"model\":\"" DEVICE_TYPE "\"," 
+      "\"loader\":\"" + version + "\"," 
+      "\"heartbeat_interval\":10"
+      "}";
+
+    http.POST(payload);
+    http.end();
+}
+
+/* ================= MQTT ================= */
+void connectMQTT() {
+    mqttClient.setServer(GATEWAY_HOST, MQTT_PORT);
+    mqttClient.setCallback(onOtaMessage);
+
+    String willTopic = "devices/" + DEVICE_UID + "/status";
+
+    while (!mqttClient.connected()) {
+        if (mqttClient.connect(
+              DEVICE_UID.c_str(),
+              willTopic.c_str(),
+              1,
+              true,
+              "{\"status\":\"offline\"}"
+            )) {
+            mqttClient.publish(willTopic.c_str(), "{\"status\":\"online\"}", true);
+
+            String otaTopic = "devices/" + DEVICE_UID + "/ota";
+            mqttClient.subscribe(otaTopic.c_str());
+
+            Serial.println("[MQTT] Connected");
+        }
+        delay(1000);
+    }
+}
+
+void ensureMQTT() {
+    if (!mqttClient.connected()) connectMQTT();
+}
+
+/* ================= HEARTBEAT ================= */
+void sendHeartbeat() {
+    if (ota_in_progress) return;
+    if (!mqttClient.connected()) return;
+
+    String topic = "devices/" + DEVICE_UID + "/heartbeat";
+    String payload = "{\"ts\":" + String(millis() / 1000) + "}";
+    mqttClient.publish(topic.c_str(), payload.c_str());
+    Serial.println(topic + payload);
+}
+
+/* ================= SETUP ================= */
+void setup() {
+    Serial.begin(115200);
+    pinMode(2, OUTPUT);
+    Serial.println("FW ver.:"+version);
+
+    uint64_t chipid = ESP.getEfuseMac();
+    char buf[13];
+    sprintf(buf, "%04X%08X", (uint16_t)(chipid >> 32), (uint32_t)chipid);
+    DEVICE_UID = String(buf);
+
+    Serial.println("UID: " + DEVICE_UID);
+
+    connectWiFi();
+    httpProvision();
+    connectMQTT();
+}
+
+/* ================= LOOP ================= */
+void loop() {
+    mqttClient.loop();
+    ensureMQTT();
+
+    unsigned long now = millis();
+    if (now - lastHb > 3000) {
+        lastHb = now;
+        sendHeartbeat();
+    }
+
+    if (now - lastLed > 500) {
+        lastLed = now;
+        ledState = !ledState;
+        digitalWrite(2, ledState ? HIGH : LOW);
+    }
+}
