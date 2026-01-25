@@ -2,6 +2,7 @@
 
 Intelligent Secure Edge Device Management System
 
+
 (Edge AI · BMC-style Management · FreeRTOS · Multi-Protocol Communication · Cybersecurity · OTA)
 
 📌 Phase 0<br>
@@ -11,7 +12,6 @@ Raspberry Pi 4B <br>
 ├── System Info (CPU / RAM / Disk)<br>
 ├── Web UI (simply HTML)<br>
 └── GitHub-ready project structure<br>
-
 
 
 📌 Phase 1
