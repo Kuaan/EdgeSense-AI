@@ -12,7 +12,7 @@ Raspberry Pi 4B <br>
 ├── System Info (CPU / RAM / Disk)<br>
 ├── Web UI (simply HTML)<br>
 └── GitHub-ready project structure<br>
-
+ 
 
 📌 Phase 1
  pass;
