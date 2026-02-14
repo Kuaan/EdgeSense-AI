@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h3>Device {{ device.uid }}</h3>
+
+<ul>
+  <li>Model: {{ device.model }}</li>
+  <li>Status: {{ device.status }}</li>
+  <li>FW: {{ device.fw_version }}</li>
+  <li>Last Seen: {{ device.last_seen }}</li>
+</ul>
+
+<h4>OTA Jobs</h4>
+
+<table border="1" cellpadding="6">
+  <tr>
+    <th>Job ID</th>
+    <th>Version</th>
+    <th>Status</th>
+  </tr>
+
+  {% for job in jobs %}
+  <tr>
+    <td>{{ job.job_id }}</td>
+    <td>{{ job.version }}</td>
+    <td>{{ job.status }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
+<h2>OTA Update</h2>
+<form method="post" action="/devices/{{ device.uid }}/ota">
+    <select name="version">
+        {% for fw in firmware_list %}
+        <option value="{{ fw }}" {% if fw == device.fw_version %}selected{% endif %}>
+            {{ fw }}
+        </option>
+        {% endfor %}
+    </select>
+    <button type="submit">Start OTA</button>
+</form>
+
+
+{% endblock %}

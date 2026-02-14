@@ -1,3 +1,4 @@
+#v8.5
 def heartbeat_topic(device_id: str) -> str:
     return f"devices/{device_id}/heartbeat"
 

@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h3>Device Dashboard</h3>
+
+<table border="1" cellpadding="6">
+  <tr>
+    <th>UID</th>
+    <th>Status</th>
+    <th>FW</th>
+    <th>Last Seen</th>
+  </tr>
+
+  {% for d in devices %}
+  <tr>
+    <td><a href="/devices/{{ d.uid }}">{{ d.uid }}</a></td>
+    <td>{{ d.status }}</td>
+    <td>{{ d.fw_version }}</td>
+    <td>{{ d.last_seen }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
+{% endblock %}

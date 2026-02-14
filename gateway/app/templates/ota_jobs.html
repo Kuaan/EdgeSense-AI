@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h3>OTA Job Monitor</h3>
+
+<table border="1" cellpadding="6">
+  <tr>
+    <th>Job ID</th>
+    <th>UID</th>
+    <th>Version</th>
+    <th>Status</th>
+  </tr>
+
+  {% for job in jobs %}
+  <tr>
+    <td>{{ job.job_id }}</td>
+    <td>{{ job.uid }}</td>
+    <td>{{ job.version }}</td>
+    <td>{{ job.status }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
+{% endblock %}

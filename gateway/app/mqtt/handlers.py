@@ -1,7 +1,11 @@
-#v8.0
+#v8.5 app/mqtt/handlers.py
 import json
+import logging
 from app.models.device import Device
 from app.core.device_registry import registry
+from app.core.ota_jobs import OTA_JOBS
+
+logger = logging.getLogger(__name__)
 
 def normalize_uid(uid: str) -> str:
     """統一 UID 格式：去掉冒號，轉大寫"""
@@ -9,25 +13,47 @@ def normalize_uid(uid: str) -> str:
 
 def on_heartbeat(client, userdata, message):
     """
-    Paho MQTT callback
     Topic: devices/{device_id}/heartbeat
+    Payload (optional): {"fw_version":"v0.0.0"}
     """
     try:
         topic = message.topic
-        uid = normalize_uid(topic.split("/")[1])
+        # 安全分割 topic
+        parts = topic.split("/")
+        if len(parts) < 2: return
+        
+        uid = normalize_uid(parts[1])
 
         device = registry.devices.get(uid)
         if not device:
-            # 自動註冊一個基本 device
+            # 這裡假設你的 Device model 建構子支援這些參數
             device = Device(uid=uid, model="esp32")
             registry.register(device)
-            print(f"[Heartbeat] Auto-registered {uid}")
+            logger.info(f"[Heartbeat] Auto-registered {uid}")
 
-        registry.update_last_seen(uid)
-        print(f"[Heartbeat] {uid}")
+        # 更新 last_seen
+        # 假設你的 registry 有這個方法
+        if hasattr(registry, 'update_last_seen'):
+            registry.update_last_seen(uid)
+
+        # ✅ parse payload（如果有）
+        if message.payload:
+            try:
+                payload_str = message.payload.decode().strip()
+                if payload_str:
+                    data = json.loads(payload_str)
+                    fw_version = data.get("fw_version")
+                    if fw_version:
+                        device.fw_version = fw_version
+            except json.JSONDecodeError:
+                pass # 忽略心跳包格式錯誤
+
+        # 這裡為了不洗版，可以註解掉 print
+        print(f"[Heartbeat] {uid}, fw_version={device.fw_version}")
 
     except Exception as e:
-        print(f"[Heartbeat Error] {e}")
+        logger.error(f"[Heartbeat Error] {e}")
+
 
 def on_ota_status(client, userdata, message):
     """
@@ -37,73 +63,36 @@ def on_ota_status(client, userdata, message):
     """
     try:
         topic = message.topic
-        uid = normalize_uid(topic.split("/")[1])
+        parts = topic.split("/")
+        if len(parts) < 2: return
+
+        uid = normalize_uid(parts[1])
         device = registry.devices.get(uid)
+        
         if not device:
-            print(f"[OTA Status] Unknown device {uid}")
+            logger.warning(f"[OTA Status] Unknown device {uid}")
             return
 
-        data = json.loads(message.payload.decode())
+        payload_str = message.payload.decode().strip()
+        if not payload_str: return
+
+        data = json.loads(payload_str)
         status = data.get("status")
         fw_version = data.get("fw_version")
+        job_id = data.get("job_id")
+
 
         if status:
             device.status = status  # downloading / flashing / success / failed
 
         if fw_version and status == "success":
             device.fw_version = fw_version
+        
+        if job_id and job_id in OTA_JOBS:
+            OTA_JOBS[job_id]["status"] = status
+            OTA_JOBS[job_id]["updated_at"] = data.get("ts")
 
-        print(f"[OTA Status] {uid} → status={device.status}, fw_version={device.fw_version}")
-
-    except Exception as e:
-        print(f"[OTA Status Error] {e}")
-
-
-'''v5.3
-from app.core.device_registry import registry
-from app.mqtt import topics
-
-
-def on_heartbeat(topic: str, payload: bytes):
-    """
-    Topic: devices/{device_id}/heartbeat
-    """
-    try:
-        parts = topic.split("/")
-        if len(parts) < 3:
-            raise ValueError(f"Invalid topic: {topic}")
-
-        uid = topic.split("/")[1]
-        registry.update_last_seen(uid)
-
-
-        print(f"[Heartbeat] {uid}")
+        logger.info(f"[OTA Status] {uid} -> status={device.status}, fw_version={device.fw_version}")
 
     except Exception as e:
-        print(f"[Heartbeat Error] {e}")
-'''
-
-'''bf v5.3
-from app.core.device_registry import registry
-from app.mqtt import topics
-
-
-def on_heartbeat(topic: str, payload: bytes):
-    """
-    Topic: devices/{device_id}/heartbeat
-    """
-    try:
-        parts = topic.split("/")
-        if len(parts) < 3:
-            raise ValueError(f"Invalid topic: {topic}")
-
-        device_id = parts[1]
-
-        registry.update_last_seen(device_id)
-
-        print(f"[Heartbeat] {device_id}")
-
-    except Exception as e:
-        print(f"[Heartbeat Error] {e}")
-
-'''
+        logger.error(f"[OTA Status Error] {e}")
