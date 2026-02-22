@@ -1,4 +1,4 @@
-#v8.5 app/mqtt/client.py
+#app/mqtt/client.py
 import os
 import paho.mqtt.client as mqtt
 from app.mqtt import handlers
@@ -22,6 +22,13 @@ def on_connect(client, userdata, flags, rc):
         "devices/+/ota_status",
         handlers.on_ota_status
     )
+    # ⭐ 新增這段
+    client.subscribe("devices/+/event")
+    client.message_callback_add(
+        "devices/+/event",
+        handlers.on_event
+    )
+    
     print("[MQTT] Subscribed to heartbeat and ota_status")
 # -------------------------
 # START
@@ -38,4 +45,3 @@ def start():
 # -------------------------
 def publish(topic, msg):
     mqtt_client.publish(topic, msg)
-

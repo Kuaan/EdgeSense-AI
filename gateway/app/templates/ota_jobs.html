@@ -1,22 +1,24 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h3>OTA Job Monitor</h3>
-
+<h3>All OTA Jobs</h3>
 <table border="1" cellpadding="6">
   <tr>
     <th>Job ID</th>
-    <th>UID</th>
+    <th>Device UID</th>
     <th>Version</th>
     <th>Status</th>
+    <th>Created</th>
   </tr>
-
   {% for job in jobs %}
   <tr>
     <td>{{ job.job_id }}</td>
     <td>{{ job.uid }}</td>
     <td>{{ job.version }}</td>
-    <td>{{ job.status }}</td>
+    <td>
+      {% if job.status == 'sent' %}<span style="color:orange">sent</span>{% elif job.status == 'downloading' %}<span style="color:blue">downloading</span>{% elif job.status == 'flashing' %}<span style="color:purple">flashing</span>{% elif job.status == 'success' %}<span style="color:green">success</span>{% elif job.status == 'failed' %}<span style="color:red">failed</span>{% else %}{{ job.status }}{% endif %}
+    </td>
+    <td>{{ friendly_time(job.ts) }}</td>
   </tr>
   {% endfor %}
 </table>

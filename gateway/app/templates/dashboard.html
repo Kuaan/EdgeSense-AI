@@ -21,4 +21,34 @@
   {% endfor %}
 </table>
 
+
+<br>
+<h3>Recent Events</h3>
+<table border="1" cellpadding="6">
+  <tr>
+    <th>Time</th>
+    <th>UID</th>
+    <th>Event</th>
+    <th>Confidence</th>
+  </tr>
+  {% for e in events %}
+  <tr>
+    <td>
+      {{ friendly_time(e.timestamp) }}
+    </td>
+    <td>
+      {{ e.uid }}
+    </td>
+    <td>
+      {{ e.event_type }}
+    </td>
+    <td>
+      {% if e.confidence %}
+        {{ "%.2f"|format(e.confidence) }}
+      {% endif %}
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+
 {% endblock %}

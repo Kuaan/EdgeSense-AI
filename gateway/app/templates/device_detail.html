@@ -2,28 +2,39 @@
 {% block content %}
 
 <h3>Device {{ device.uid }}</h3>
-
 <ul>
   <li>Model: {{ device.model }}</li>
-  <li>Status: {{ device.status }}</li>
+  <li>Status: 
+    {% if device.status == 'online' %}
+      <span style="color:green">{{ device.status }}</span>
+    {% elif device.status in ['downloading','flashing'] %}
+      <span style="color:orange">{{ device.status }}</span>
+    {% elif device.status == 'failed' %}
+      <span style="color:red">{{ device.status }}</span>
+    {% else %}
+      {{ device.status }}
+    {% endif %}
+  </li>
   <li>FW: {{ device.fw_version }}</li>
-  <li>Last Seen: {{ device.last_seen }}</li>
+  <li>Last Seen: {{ friendly_time(device.last_seen) }}</li>
 </ul>
 
 <h4>OTA Jobs</h4>
-
 <table border="1" cellpadding="6">
   <tr>
     <th>Job ID</th>
     <th>Version</th>
     <th>Status</th>
+    <th>Created</th>
   </tr>
-
   {% for job in jobs %}
   <tr>
     <td>{{ job.job_id }}</td>
     <td>{{ job.version }}</td>
-    <td>{{ job.status }}</td>
+    <td>
+      {% if job.status == 'sent' %}<span style="color:orange">sent</span>{% elif job.status == 'downloading' %}<span style="color:blue">downloading</span>{% elif job.status == 'flashing' %}<span style="color:purple">flashing</span>{% elif job.status == 'success' %}<span style="color:green">success</span>{% elif job.status == 'failed' %}<span style="color:red">failed</span>{% else %}{{ job.status }}{% endif %}
+    </td>
+    <td>{{ friendly_time(job.ts) }}</td>
   </tr>
   {% endfor %}
 </table>
@@ -32,13 +43,17 @@
 <form method="post" action="/devices/{{ device.uid }}/ota">
     <select name="version">
         {% for fw in firmware_list %}
-        <option value="{{ fw }}" {% if fw == device.fw_version %}selected{% endif %}>
-            {{ fw }}
-        </option>
+        <option value="{{ fw }}">{{ fw }}</option>
         {% endfor %}
     </select>
+    <label>
+        <input type="checkbox" name="force" value="true"> Force OTA
+    </label>
     <button type="submit">Start OTA</button>
 </form>
 
+<form method="post" action="/devices/{{ device.uid }}/reset" style="margin-top:10px;">
+    <button type="submit">Reset Device Status</button>
+</form>
 
 {% endblock %}

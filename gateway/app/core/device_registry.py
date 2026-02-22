@@ -1,4 +1,5 @@
-#v8.5 app/core/device_registry.py
+#v8.2
+# app/core/device_registry.py
 import time
 from datetime import datetime
 from app.models.device import Device
@@ -49,6 +50,4 @@ class DeviceRegistry:
 
 # ⭐ singleton
 registry = DeviceRegistry()
-
-
 

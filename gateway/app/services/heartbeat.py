@@ -1,4 +1,3 @@
-#v8.5
 import asyncio
 from app.core.device_registry import DeviceRegistry
 

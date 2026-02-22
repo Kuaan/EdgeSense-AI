@@ -5,24 +5,20 @@
 #define BLED 2
 
 /* ========= USER CONFIG ========= */
-
-#define WIFI_SSID     ""
-#define WIFI_PASSWORD ""
-#define MQTT_HOST     ""   // Raspberry Pi IP
+#define WIFI_SSID     "DrayTek_M"
+#define WIFI_PASSWORD "1qasde32"
+#define MQTT_HOST     "192.168.1.20"   // Raspberry Pi IP
 #define MQTT_PORT     1883
 
 #define HEARTBEAT_INTERVAL_MS 5000
 
-String fw_version= "v2.1.2"; //for test  
+String fw_version= "v0.0.0"; //for test  
 /* ========= GLOBAL ========= */
 WiFiClient espClient;
 PubSubClient mqtt(espClient);
 
 String deviceUID;
 unsigned long lastHeartbeat = 0;
-
-String currentJobId = "";
-
 
 
 unsigned long nowMs=0;
@@ -56,9 +52,8 @@ String topicOTA() {
   return "devices/" + deviceUID + "/ota";
 }
 String topicOTAResult() {
-  return "devices/" + deviceUID + "/ota_status";
+  return "devices/" + deviceUID + "/ota/result";
 }
-
 
 /* ========= MQTT REPORT ========= */
 void publishStatus(const String& status) {
@@ -67,16 +62,9 @@ void publishStatus(const String& status) {
 }
 
 void publishOTAResult(const String& status) {
-  String payload =
-  "{"
-  "\"job_id\":\"" + currentJobId + "\","
-  "\"status\":\"" + status + "\","
-  "\"fw_version\":\"" + fw_version + "\""
-  "}";
-
-  mqtt.publish(topicOTAResult().c_str(),payload.c_str(),false);
+  String payload = "{\"status\":\"" + status + "\",\"fw_version\":\"" +fw_version+ "\"}";
+  mqtt.publish(topicOTAResult().c_str(), payload.c_str(), false);
 }
-
 
 /* ========= OTA CORE ========= */
 void doOTA(String url, String version) {
@@ -141,14 +129,6 @@ void onMqttMessage(char* topic, byte* payload, unsigned int length) {
   int v2 = msg.indexOf("\"", v1 + 10);
   int v3 = msg.indexOf("\"", v2 + 1);
   String version = msg.substring(v2 + 1, v3);
-
-  int j1 = msg.indexOf("\"job_id\"");
-  int j2 = msg.indexOf("\"", j1 + 9);
-  int j3 = msg.indexOf("\"", j2 + 1);
-
-  String job_id = msg.substring(j2 + 1, j3);
-  currentJobId = job_id;
-
 
   doOTA(url, version);
 }
