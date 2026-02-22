@@ -1,6 +1,3 @@
-// #define WIFI_SSID     "DrayTek_M"
-// #define WIFI_PASSWORD "1qasde32"
-// #define MQTT_HOST     "192.168.1.20"  
 #include <WiFi.h>
 #include <PubSubClient.h>
 #include <HTTPClient.h>
@@ -8,9 +5,9 @@
 
 #define BLED 2
 
-#define WIFI_SSID     "Ang"
-#define WIFI_PASSWORD "22560540"
-#define MQTT_HOST     "172.20.10.4"
+#define WIFI_SSID     ""
+#define WIFI_PASSWORD ""
+#define MQTT_HOST     ""
 #define MQTT_PORT     1883
 
 #define HEARTBEAT_INTERVAL_MS 5000
