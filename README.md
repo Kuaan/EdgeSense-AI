@@ -3,7 +3,6 @@
 Intelligent Secure Edge Device Management System<br>
 (Edge AI · BMC-style Management · FreeRTOS · Multi-Protocol Communication · Cybersecurity · OTA)
 
-  
 📌 Phase 0<br>
 Raspberry Pi 4B <br>
 ├── FastAPI (Device Management API)<br>
