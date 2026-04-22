@@ -9,7 +9,7 @@ Raspberry Pi 4B <br>
 ├── Web UI (simply HTML)<br>
 └── GitHub-ready project structure<br>
 
- 
+  
 📌 Phase 1
  pass;
  
