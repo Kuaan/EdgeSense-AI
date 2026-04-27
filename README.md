@@ -1,5 +1,5 @@
-### EdgeSense-AI
-# MCU-Scale Edge Computing & Device Orchestration Platform
+# EdgeSense-AI
+## MCU-Scale Edge Computing & Device Orchestration Platform
 EdgeSense-AI is a **lightweight Edge Computing platform** that demonstrates how **real Edge AI infrastructure can be built using microcontrollers** instead of heavy cloud-dependent systems.
 The project showcases **Edge Computing running on ESP32-class MCUs**, coordinated by a self-built gateway designed for flexible Industrial IoT deployments.
 Unlike traditional IoT platforms relying on large frameworks or proprietary modules, EdgeSense-AI focuses on:
@@ -11,7 +11,7 @@ Unlike traditional IoT platforms relying on large frameworks or proprietary modu
 
 ---
 
-# Core Idea
+## Core Idea
 
 > Can microcontrollers act as real edge computers instead of simple sensor nodes?
 
@@ -21,7 +21,7 @@ ESP32 devices operate as an **Edge Compute Layer**, executing AI inference, rout
 
 ---
 
-# System Architecture
+## System Architecture
 
 ```txt
                     ┌────────────────────┐
@@ -51,11 +51,11 @@ ESP32 devices operate as an **Edge Compute Layer**, executing AI inference, rout
                                             └───────────────┘
 ```
 
-# Architecture Layers
+## Architecture Layers
 - Lightweight Edge Gateway — Raspberry Pi 4B
 A self-built gateway stack, replacing heavy IoT platforms.
 
-Features:
+- Features:
 
 Async FastAPI control plane
 MQTT event backbone
@@ -64,7 +64,7 @@ OTA firmware lifecycle
 Telemetry storage
 
 
-Designed to be:
+- Designed to be:
 
 portable
 hackable
@@ -72,7 +72,7 @@ infrastructure-like
 
 without Kubernetes, cloud lock-in, or proprietary SDKs.
 
-#Edge Compute Layer — ESP32 Family
+## Edge Compute Layer — ESP32 Family
 
 ESP32 devices act as edge computers, not passive endpoints.
 
@@ -92,7 +92,7 @@ Downstream device aggregation
 
 Extends gateway reach beyond WiFi environments.
 
-# Deep Edge Layer — STM32F103
+## Deep Edge Layer — STM32F103
 
 Ultra-low-level sensing layer.
 
@@ -104,54 +104,53 @@ Represents field-deployed sensor endpoints.
 
 ## Key Capabilities
 
-# MCU-Level Edge AI
-
+### MCU-Level Edge AI
 Real-time AI inference running on ESP32-S3 without cloud dependency.
 
-# Self-Built Gateway Infrastructure
-
+### Self-Built Gateway Infrastructure
 Custom gateway replacing heavy IoT stacks with a lightweight asynchronous backend.
 
-# OTA Device Lifecycle Management
+### OTA Device Lifecycle Management
 Remote firmware deployment
 Job tracking
 Status monitoring
 Version control
-# Hybrid Network Topology
 
-Single system managing:
-
+### Hybrid Network Topology
+- Single system managing:
 WiFi devices
 LoRa sensor networks
 Multi-hop edge communication
-# Out-of-Band Monitoring
 
+### Out-of-Band Monitoring
 Health visibility across all layers:
 
-Gateway:
+- Gateway:
 CPU / RAM / Temperature
 
-Nodes:
+- Nodes:
 RSSI / SNR / Heartbeat
 
-#🛠️ Engineering Challenges Solved
-ESP32 Camera + WiFi DMA Conflict
-Stabilized concurrent camera streaming and WiFi networking through memory tuning and task isolation.
-Long-Range Packet Corruption
-Implemented defensive JSON parsing for unreliable LoRa transmissions.
-Autonomous Device Onboarding
-Dynamic device registry enabling plug-and-deploy nodes.
+### 🛠️ Engineering Challenges Solved 🛠️
+- ESP32 Camera + WiFi DMA Conflict
+- Stabilized concurrent camera streaming and WiFi networking through memory tuning and task isolation.
+- Long-Range Packet Corruption
+- Implemented defensive JSON parsing for unreliable LoRa transmissions.
+- Autonomous Device Onboarding
+- Dynamic device registry enabling plug-and-deploy nodes.
 
-# Development Roadmap
+### Development Roadmap
 Phase	Description
 [v] P0-P2	Gateway Core & MQTT Pipeline
 [v] P3	OTA Manager
 [v] P4	MCU Edge AI Deployment
 [v] P5-P6	LoRa Multi-Hop Integration
-[i] P7	Security Hardening
-[-] P8	Event Bus & Edge Automation
+[ ] P7	Security Hardening
+[ ] P8	Event Bus & Edge Automation
 
-# Quick Start
+
+
+## >>> Quick Start <<<
 Setup Gateway
 git clone https://github.com/your-username/EdgeSense-AI.git
 cd EdgeSense-AI/gateway
@@ -163,8 +162,7 @@ Flash binaries from:
 /firmware
 
 
-
-# Project Vision
+### Project Vision
 
 EdgeSense-AI explores a new direction:
 Edge Computing should not require powerful hardware.
