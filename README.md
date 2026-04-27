@@ -152,7 +152,7 @@ Phase	Description
 ---
 ## >>> Quick Start <<<
 Setup Gateway
-git clone https://github.com/your-username/EdgeSense-AI.git
+git clone https://github.com/Kuaan/EdgeSense-AI.git
 cd EdgeSense-AI/gateway
 pip install -r requirements.txt
 uvicorn app.main:app --host 0.0.0.0 --port 8000
