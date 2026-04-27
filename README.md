@@ -52,29 +52,26 @@ ESP32 devices operate as an **Edge Compute Layer**, executing AI inference, rout
 ```
 
 ## Architecture Layers
-- Lightweight Edge Gateway — Raspberry Pi 4B
+### Lightweight Edge Gateway — Raspberry Pi 4B
 A self-built gateway stack, replacing heavy IoT platforms.
 
 - Features:
-
 Async FastAPI control plane
 MQTT event backbone
 Dynamic device registry
 OTA firmware lifecycle
 Telemetry storage
 
-
 - Designed to be:
-
 portable
 hackable
 infrastructure-like
 
 without Kubernetes, cloud lock-in, or proprietary SDKs.
 
-## Edge Compute Layer — ESP32 Family
+### Edge Compute Layer — ESP32 Family
 
-ESP32 devices act as edge computers, not passive endpoints.
+- ESP32 devices act as edge computers, not passive endpoints.
 
 ESP32-S3 — Edge AI Vision Node
 On-device CNN inference (FOMO / MobileNetV2)
@@ -82,7 +79,7 @@ Real-time object detection
 Dual-core task separation
 Optimized DMA camera pipeline
 
-Demonstrates TinyML on resource-constrained MCU hardware.
+- Demonstrates TinyML on resource-constrained MCU hardware.
 
 ESP32 Node — Edge Network Router
 MQTT client node
@@ -92,8 +89,7 @@ Downstream device aggregation
 
 Extends gateway reach beyond WiFi environments.
 
-## Deep Edge Layer — STM32F103
-
+### Deep Edge Layer — STM32F103
 Ultra-low-level sensing layer.
 
 FreeRTOS scheduler
@@ -101,6 +97,8 @@ Long-range LoRa telemetry
 Resilient low-bandwidth operation
 
 Represents field-deployed sensor endpoints.
+
+---
 
 ## Key Capabilities
 
