@@ -149,7 +149,7 @@ Phase	Description
 [ ] P8	Event Bus & Edge Automation
 
 
-
+---
 ## >>> Quick Start <<<
 Setup Gateway
 git clone https://github.com/your-username/EdgeSense-AI.git
