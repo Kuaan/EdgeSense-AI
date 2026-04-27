@@ -1,4 +1,4 @@
-<h1>EdgeSense-AI</h1>
+### EdgeSense-AI
 # MCU-Scale Edge Computing & Device Orchestration Platform
 EdgeSense-AI is a **lightweight Edge Computing platform** that demonstrates how **real Edge AI infrastructure can be built using microcontrollers** instead of heavy cloud-dependent systems.
 The project showcases **Edge Computing running on ESP32-class MCUs**, coordinated by a self-built gateway designed for flexible Industrial IoT deployments.
@@ -63,6 +63,7 @@ Dynamic device registry
 OTA firmware lifecycle
 Telemetry storage
 
+
 Designed to be:
 
 portable
@@ -101,7 +102,8 @@ Resilient low-bandwidth operation
 
 Represents field-deployed sensor endpoints.
 
-# Key Capabilities
+## Key Capabilities
+
 # MCU-Level Edge AI
 
 Real-time AI inference running on ESP32-S3 without cloud dependency.
