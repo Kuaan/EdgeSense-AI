@@ -98,8 +98,7 @@ Resilient low-bandwidth operation
 
 Represents field-deployed sensor endpoints.
 
-
-## Key Capabilities
+---
 ### MCU-Level Edge AI
 Real-time AI inference running on ESP32-S3 without cloud dependency.
 
