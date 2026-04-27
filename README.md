@@ -164,7 +164,7 @@ EdgeSense-AI explores a new direction:
 Edge Computing should not require powerful hardware.
 This project demonstrates that distributed edge infrastructure can emerge from microcontrollers.
 
-👤 Author
-Angus Ku
-Embedded Systems • Edge AI • Distributed IoT Infrastructure
+Author <br>
+Angus Ku <br>
+2026 Embedded Systems • Edge AI • Distributed IoT Infrastructure 
 
