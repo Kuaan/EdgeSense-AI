@@ -3,7 +3,6 @@
 EdgeSense-AI is a **lightweight Edge Computing platform** that demonstrates how **real Edge AI infrastructure can be built using microcontrollers** instead of heavy cloud-dependent systems.
 The project showcases **Edge Computing running on ESP32-class MCUs**, coordinated by a self-built gateway designed for flexible Industrial IoT deployments.
 Unlike traditional IoT platforms relying on large frameworks or proprietary modules, EdgeSense-AI focuses on:
-
 - Minimal hardware footprint
 - Full system ownership
 - Deployable edge intelligence
