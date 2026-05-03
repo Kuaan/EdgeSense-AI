@@ -8,7 +8,6 @@ Unlike traditional IoT platforms relying on large frameworks or proprietary modu
 - Deployable edge intelligence
 - Infrastructure-style device management
   
-  
 ---
 
 ## Core Idea
