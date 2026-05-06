@@ -140,8 +140,8 @@ Phase	Description<br>
 [v] P3	OTA Manager<br>
 [v] P4	MCU Edge AI Deployment<br>
 [v] P5-P6	LoRa Multi-Hop Integration<br>
-[_] P7	Security Hardening<br>
-[_] P8	Event Bus & Edge Automation<br>
+[&nbsp] P7	Security Hardening<br>
+[&nbsp] P8	Event Bus & Edge Automation<br>
 
 
 ---
