@@ -134,14 +134,14 @@ RSSI / SNR / Heartbeat
 - Autonomous Device Onboarding
 - Dynamic device registry enabling plug-and-deploy nodes.
 
-### Development Roadmap
-Phase	Description
-[v] P0-P2	Gateway Core & MQTT Pipeline
-[v] P3	OTA Manager
-[v] P4	MCU Edge AI Deployment
-[v] P5-P6	LoRa Multi-Hop Integration
-[ ] P7	Security Hardening
-[ ] P8	Event Bus & Edge Automation
+### Development Roadmap <br>
+Phase	Description<br>
+[v] P0-P2	Gateway Core & MQTT Pipeline<br>
+[v] P3	OTA Manager<br>
+[v] P4	MCU Edge AI Deployment<br>
+[v] P5-P6	LoRa Multi-Hop Integration<br>
+[ ] P7	Security Hardening<br>
+[ ] P8	Event Bus & Edge Automation<br>
 
 
 ---
