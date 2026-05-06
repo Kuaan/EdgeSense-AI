@@ -136,12 +136,12 @@ RSSI / SNR / Heartbeat
 
 ### Development Roadmap <br>
 Phase	Description<br>
-[v] P0-P2	Gateway Core & MQTT Pipeline<br>
-[v] P3	OTA Manager<br>
-[v] P4	MCU Edge AI Deployment<br>
-[v] P5-P6	LoRa Multi-Hop Integration<br>
-[&nbsp] P7	Security Hardening<br>
-[&nbsp] P8	Event Bus & Edge Automation<br>
+-[x] P0-P2	Gateway Core & MQTT Pipeline<br>
+-[x] P3	OTA Manager<br>
+-[x] P4	MCU Edge AI Deployment<br>
+-[x] P5-P6	LoRa Multi-Hop Integration<br>
+-[ ] P7	Security Hardening<br>
+-[ ] P8	Event Bus & Edge Automation<br>
 
 
 ---
