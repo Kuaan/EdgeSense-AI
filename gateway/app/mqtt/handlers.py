@@ -1,169 +1,134 @@
-# v10.0 app/mqtt/handlers.py
+#v1.1.13 app/mqtt/handlers.py
 
 import json
 import logging
 import time
-
+from datetime import datetime
 from app.models.device import Device
-from app.core.device_registry import registry
 from app.core.ota_jobs import OTA_JOBS
-from app.core.event_manager import event_manager
+from app.core.device_registry import registry
+from app.core.event_manager import event_manager 
 
 logger = logging.getLogger(__name__)
-# =========================================================
-# UID normalize
-# =========================================================
+
 def normalize_uid(uid: str) -> str:
-    """統一 UID 格式：去掉冒號，轉大寫"""
-    return uid.replace(":", "").upper()
+    """ UID formate：remove":", uppercase"""
+    if not uid: return "UNKNOWN"
+    return uid.replace(":", "").upper().strip()
 
 # =========================================================
-# Heartbeat
+# 1. Heartbeat Handler
 # =========================================================
 def on_heartbeat(client, userdata, message):
     try:
         parts = message.topic.split("/")
-        if len(parts) < 2:
-            return
+        if len(parts) < 2: return
         uid = normalize_uid(parts[1])
-        device = registry.devices.get(uid)
-        # auto register
-        if not device:
-            device = Device(
-                uid=uid,
-                model="esp32"
-            )
-            registry.register(device)
-            logger.info(f"[Heartbeat] Auto-registered {uid}")
-
-        # update last seen
-        if hasattr(registry, "update_last_seen"):
-            registry.update_last_seen(uid)
-        else:
-            device.last_seen = time.time()
-            
-        # parse payload
-        if message.payload:
-            try:
-                data = json.loads(
-                    message.payload.decode().strip()
-                )
-                fw_version = data.get("fw_version")
-                if fw_version:
-                    device.fw_version = fw_version
-                #    
-                print(f"[Heartbeat] {uid}, fw_version={device.fw_version}")
-                #
-            except Exception as e: 
-                logger.warning(f"Payload parse error: {e}")
         
-        logger.info(
-            f"[Heartbeat] {uid}, fw={device.fw_version}"
-        )
-
+        if uid not in registry.devices:
+            new_dev = Device(uid=uid, model="esp32-node", status="online")
+            registry.register(new_dev)
+            logger.info(f"🆕 [Auto-Register] Heartbeat from new device: {uid}")
+        
+        registry.update_last_seen(uid)
+        logger.info(f"💓 [Heartbeat] {uid}")
     except Exception as e:
-        logger.error(f"[Heartbeat Error] {e}")
-
+        logger.error(f"❌ [Heartbeat Error] {e}")
 
 # =========================================================
-# OTA STATUS  ⭐ 工業級版本
+# 2. OTA Status Handler
 # =========================================================
 def on_ota_status(client, userdata, message):
     try:
-        parts = message.topic.split("/")
-        if len(parts) < 2:
-            return
-
-        uid = normalize_uid(parts[1])
-        device = registry.devices.get(uid)
-
-        if not device:
-            logger.warning(
-                f"[OTA] unknown device {uid}"
-            )
-            return
-
-        payload_str = message.payload.decode().strip()
-        if not payload_str:
-            return
-
-        data = json.loads(payload_str)
-        status = data.get("status")
-        fw_version = data.get("fw_version")
-        job_id = data.get("job_id")
-        ts = data.get("ts", time.time())
+        payload = json.loads(message.payload.decode())
+        job_id = payload.get("job_id")
+        status = payload.get("status")
         
-        # =====================================================
-        # update device state
-        # =====================================================
-        if status:
-            device.status = status
+        if not job_id: return
 
-        if status == "success":
-            device.status = "online"
-            if fw_version:
-                device.fw_version = fw_version
-
-        if status == "failed":
-            device.status = "online"
-
-        # =====================================================
-        # update OTA JOB
-        # =====================================================
-        if job_id and job_id in OTA_JOBS:
-            job = OTA_JOBS[job_id]
-            job["status"] = status
-            job["updated_at"] = ts
-
-            if status == "success":
-                job["completed_at"] = ts
-                job["result"] = "success"
-
-            elif status == "failed":
-                job["completed_at"] = ts
-                job["result"] = "failed"
-
-        else:
-            logger.warning(
-                f"[OTA] job not found {job_id}"
-            )
-
-        logger.info(
-            f"[OTA] {uid} job={job_id} status={status}"
-        )
-
+        from app.core.ota_manager import ota_manager
+        ota_manager.update_status(job_id, status)
+        
+        logger.info(f"✅ [MQTT] OTA Job {job_id} status changed to: {status}")
     except Exception as e:
-        logger.error(
-            f"[OTA Status Error] {e}"
-        )
-
+        logger.error(f"❌ [OTA Status Error] {e}")
+        
 # =========================================================
-# EVENT
+# 3. Event Handler (AI & LoRa)
 # =========================================================
 def on_event(client, userdata, message):
+    uid = "UNKNOWN"
     try:
+        # 0. parse Topic, get UID
         parts = message.topic.split("/")
-        if len(parts) < 2:
-            return
+        if len(parts) < 2: return
         uid = normalize_uid(parts[1])
-        payload_str = message.payload.decode().strip()
-        if not payload_str:
+
+        # 1. get the original Byte and decoding
+        raw_payload = message.payload.decode('utf-8', errors='ignore')
+        
+        # 2. keep the first context
+        start_idx = raw_payload.find('{')
+        end_idx = raw_payload.rfind('}')
+        
+        if start_idx == -1 or end_idx == -1:
+            logger.error(f"❌ [MQTT] Invalid JSON structure from {uid}")
             return
-        data = json.loads(payload_str)
-        event_type = data.get("event")
-        confidence = data.get("confidence")
-        image = data.get("image")
-        # 建立 event
-        event = event_manager.create_event(
-            uid=uid,
-            event_type=event_type,
-            confidence=confidence,
-            image=image
-        )
-        logger.info(
-            f"[EVENT] {uid} {event_type} conf={confidence}"
-        )
-        #print(f"[EVENT] {uid} {event_type} conf={confidence}") 
+            
+        clean_json = raw_payload[start_idx:end_idx + 1]
+        
+        # 3. parse the JSON after cleaning
+        data = json.loads(clean_json)
+        
+        # 4. auto-registry
+        if uid not in registry.devices:
+            m_type = "stm32-lora" if "data" in data else "esp32-s3-cam"
+            device = Device(uid=uid, model=m_type, status="online")
+            registry.register(device)
+            logger.info(f"🆕 [Auto-Register] Event from {m_type}: {uid}")
+        
+        device = registry.devices.get(uid)
+
+        # ---  LoRa data (STM32 channel) ---
+        if "data" in data:
+            device.sensor_data = data.get("data")
+            device.rssi = data.get("rssi")
+            device.snr = data.get("snr")
+            device.last_seen = datetime.now()
+            device.model = "stm32-lora" 
+            logger.info(f"📡 [LoRa Data] {uid}: {device.sensor_data}")
+
+        # --- handle AI event (ESP32-S3 CAM channel) ---
+        if "event" in data:
+            event_obj = event_manager.create_event(
+                uid=uid,
+                event_type=data.get("event"),
+                confidence=data.get("confidence", 0.0),
+                image=data.get("image")
+            )
+            event_manager.process_ai_logic(event_obj)
+
+            img_filename = getattr(event_obj, 'image_filename', None)
+            
+            # update device status
+            device.model = "esp32-s3-cam"
+            device.last_ai_event = data.get("event")
+            device.last_ai_confidence = data.get("confidence", 0.0)
+            device.last_ai_time = datetime.now() 
+            
+            if img_filename:
+                device.last_ai_image_url = f"/static/captures/{img_filename}"
+                
+                # update the history of devices
+                if not hasattr(device, 'ai_history'): device.ai_history = []
+                device.ai_history.insert(0, {
+                    "url": device.last_ai_image_url, 
+                    "time": device.last_ai_time.strftime("%H:%M:%S")
+                })
+                device.ai_history = device.ai_history[:5]
+                logger.info(f"📸 [AI Sync] {uid} matched image: {img_filename}")
+            else:
+                logger.warning(f"⚠️ [AI Sync] No image filename for {uid}")
 
     except Exception as e:
-        logger.error(f"[EVENT Error] {e}")
+        logger.error(f"❌ [Event Error] Device {uid}: {e}")

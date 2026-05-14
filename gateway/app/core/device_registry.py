@@ -1,5 +1,4 @@
-#v8.2
-# app/core/device_registry.py
+#v1.1.8 app/core/device_registry.py
 import time
 from datetime import datetime
 from app.models.device import Device
@@ -40,11 +39,11 @@ class DeviceRegistry:
                     device.status = "offline"
                     print(f"[Heartbeat] {device.uid} marked offline")
 
-    # ⭐ UI需要
+    # ⭐ UI 
     def list(self):
         return list(self.devices.values())
         
-    # ⭐ UI需要
+    # ⭐ UI
     def get(self, uid: str):
         return self.devices.get(uid)
 

@@ -1,26 +1,50 @@
 {% extends "base.html" %}
 {% block content %}
+<!--v1.1.1-->
+<style>
+    .ota-table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .ota-table th, .ota-table td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #eee; }
+    .ota-table th { background-color: #f4f6f7; color: #7f8c8d; font-size: 0.9em; text-transform: uppercase; }
+    .badge { padding: 4px 8px; border-radius: 20px; font-size: 11px; font-weight: bold; }
+    .status-started { background: #e1f5fe; color: #03a9f4; }
+    .status-success { background: #e8f5e9; color: #2ecc71; }
+    .status-failed { background: #ffebee; color: #e74c3c; }
+    .status-downloading { background: #fff3e0; color: #ff9800; }
+</style>
 
 <h3>All OTA Jobs</h3>
-<table border="1" cellpadding="6">
-  <tr>
-    <th>Job ID</th>
-    <th>Device UID</th>
-    <th>Version</th>
-    <th>Status</th>
-    <th>Created</th>
-  </tr>
-  {% for job in jobs %}
-  <tr>
-    <td>{{ job.job_id }}</td>
-    <td>{{ job.uid }}</td>
-    <td>{{ job.version }}</td>
-    <td>
-      {% if job.status == 'sent' %}<span style="color:orange">sent</span>{% elif job.status == 'downloading' %}<span style="color:blue">downloading</span>{% elif job.status == 'flashing' %}<span style="color:purple">flashing</span>{% elif job.status == 'success' %}<span style="color:green">success</span>{% elif job.status == 'failed' %}<span style="color:red">failed</span>{% else %}{{ job.status }}{% endif %}
-    </td>
-    <td>{{ friendly_time(job.ts) }}</td>
-  </tr>
-  {% endfor %}
+
+<table class="ota-table">
+    <thead>
+        <tr>
+            <th>Job ID</th>
+            <th>Device UID</th>
+            <th>Version</th>
+            <th>Status</th>
+            <th>Created</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for job in jobs %}
+        <tr>
+            <td><code>{{ job.job_id }}</code></td>
+            <td><strong><a href="/devices/{{ job.uid }}">{{ job.uid }}</a></strong></td>
+            <td>{{ job.version }}</td>
+            <td>
+                <span class="badge status-{{ job.status }}">
+                    {{ job.status.upper() }}
+                </span>
+            </td>
+            <td>{{ friendly_time(job.ts) }}</td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="5" style="text-align: center; color: #999; padding: 30px;">
+                No OTA jobs found. Start an OTA update from the device detail page.
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
 </table>
 
 {% endblock %}

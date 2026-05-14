@@ -1,4 +1,4 @@
-# app/api/events.py
+#v1.1.1 app/api/events.py
 from fastapi import APIRouter
 from app.core.event_manager import event_manager
 

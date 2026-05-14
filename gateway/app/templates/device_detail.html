@@ -1,59 +1,81 @@
 {% extends "base.html" %}
 {% block content %}
+<!--v1.1.1-->
+<style>
+    .info-card { background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 5px solid #3498db; }
+    .ota-form { background: #fff; padding: 20px; border: 1px solid #ddd; border-radius: 8px; }
+    .badge-status { padding: 3px 8px; border-radius: 12px; font-size: 0.85em; font-weight: bold; }
+    .status-online { background: #e8f5e9; color: #2e7d32; }
+    .status-ota { background: #fff3e0; color: #ef6c00; }
+    .status-failed { background: #ffebee; color: #c62828; }
+</style>
 
-<h3>Device {{ device.uid }}</h3>
-<ul>
-  <li>Model: {{ device.model }}</li>
-  <li>Status: 
-    {% if device.status == 'online' %}
-      <span style="color:green">{{ device.status }}</span>
-    {% elif device.status in ['downloading','flashing'] %}
-      <span style="color:orange">{{ device.status }}</span>
-    {% elif device.status == 'failed' %}
-      <span style="color:red">{{ device.status }}</span>
-    {% else %}
-      {{ device.status }}
-    {% endif %}
-  </li>
-  <li>FW: {{ device.fw_version }}</li>
-  <li>Last Seen: {{ friendly_time(device.last_seen) }}</li>
-</ul>
+<div class="info-card">
+    <h3>Device Detail: {{ device.uid }}</h3>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <div><strong>Model:</strong> {{ device.model }}</div>
+        <div><strong>FW Version:</strong> <code>{{ device.fw_version }}</code></div>
+        <div><strong>Status:</strong> 
+            <span class="badge-status {% if device.status == 'online' %}status-online{% elif device.status in ['downloading','flashing'] %}status-ota{% else %}status-failed{% endif %}">
+                {{ device.status.upper() }}
+            </span>
+        </div>
+        <div><strong>Last Seen:</strong> {{ friendly_time(device.last_seen) }}</div>
+    </div>
+</div>
 
-<h4>OTA Jobs</h4>
-<table border="1" cellpadding="6">
-  <tr>
-    <th>Job ID</th>
-    <th>Version</th>
-    <th>Status</th>
-    <th>Created</th>
-  </tr>
-  {% for job in jobs %}
-  <tr>
-    <td>{{ job.job_id }}</td>
-    <td>{{ job.version }}</td>
-    <td>
-      {% if job.status == 'sent' %}<span style="color:orange">sent</span>{% elif job.status == 'downloading' %}<span style="color:blue">downloading</span>{% elif job.status == 'flashing' %}<span style="color:purple">flashing</span>{% elif job.status == 'success' %}<span style="color:green">success</span>{% elif job.status == 'failed' %}<span style="color:red">failed</span>{% else %}{{ job.status }}{% endif %}
-    </td>
-    <td>{{ friendly_time(job.ts) }}</td>
-  </tr>
-  {% endfor %}
-</table>
+<div class="ota-form">
+    <h4>Trigger OTA Update</h4>
+    <form method="post" action="/devices/{{ device.uid }}/ota">
+        <div style="margin-bottom: 15px;">
+            <label>Select Binary:</label><br>
+            <select name="version" required style="width: 100%; padding: 8px; margin-top: 5px;">
+                {% for fw in firmware_list %}
+                    <option value="{{ fw }}">{{ fw }}</option>
+                {% else %}
+                    <option disabled>No firmware files found in /firmware</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div style="margin-bottom: 15px;">
+            <label style="cursor: pointer;">
+                <input type="checkbox" name="force" value="true"> Force Update (Skip version check)
+            </label>
+        </div>
 
-<h2>OTA Update</h2>
-<form method="post" action="/devices/{{ device.uid }}/ota">
-    <select name="version">
-        {% for fw in firmware_list %}
-        <option value="{{ fw }}">{{ fw }}</option>
+        <button type="submit" style="background: #3498db; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; width: 100%;">
+            Start OTA Deployment
+        </button>
+    </form>
+</div>
+
+<h4 style="margin-top: 30px;">Device Job History</h4>
+<table border="0" style="width: 100%; border-collapse: collapse; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+    <thead style="background: #eee;">
+        <tr>
+            <th style="padding: 10px; text-align: left;">Job ID</th>
+            <th style="padding: 10px; text-align: left;">Version</th>
+            <th style="padding: 10px; text-align: left;">Status</th>
+            <th style="padding: 10px; text-align: left;">Time</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for job in jobs %}
+        <tr style="border-bottom: 1px solid #eee;">
+            <td style="padding: 10px;"><code>{{ job.job_id }}</code></td>
+            <td style="padding: 10px;">{{ job.version }}</td>
+            <td style="padding: 10px;">
+                <span class="badge-status" style="border: 1px solid #ccc;">{{ job.status }}</span>
+            </td>
+            <td style="padding: 10px;">{{ friendly_time(job.ts) }}</td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="4" style="padding: 20px; text-align: center; color: #999;">No OTA history for this device.</td>
+        </tr>
         {% endfor %}
-    </select>
-    <label>
-        <input type="checkbox" name="force" value="true"> Force OTA
-    </label>
-    <button type="submit">Start OTA</button>
-</form>
-
-<form method="post" action="/devices/{{ device.uid }}/reset" style="margin-top:10px;">
-    <button type="submit">Reset Device Status</button>
-</form>
+    </tbody>
+</table>
 
 {% endblock %}

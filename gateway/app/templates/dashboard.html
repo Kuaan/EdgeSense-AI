@@ -1,54 +1,74 @@
 {% extends "base.html" %}
 {% block content %}
+<!--v1.1.1-->
+<style>
+    .device-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 20px; padding: 20px 0; }
+    .device-card { background: white; border: 1px solid #ddd; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); overflow: hidden; display: flex; flex-direction: column; }
+    .card-header { background: #fcfcfc; padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+    .status-online { color: #2ecc71; font-weight: bold; }
+    .status-offline { color: #95a5a6; font-weight: bold; }
+    
+    .photo-wall { height: 300px; background: #f4f4f4; position: relative; }
+    .photo-item.hero img { width: 100%; height: 220px; object-fit: cover; }
+    .history-strip { display: flex; gap: 4px; padding: 4px; height: 76px; }
+    .history-strip img { width: 25%; height: 100%; object-fit: cover; border-radius: 4px; }
+    
+    .sensor-display { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; background: #eef7ff; color: #2c3e50; }
+    .sensor-value { font-size: 2.5em; font-weight: 800; color: #2980b9; margin: 10px 0; }
+    .photo-tag { position: absolute; top: 185px; left: 0; right: 0; background: rgba(0,0,0,0.6); color: white; font-size: 11px; padding: 5px 10px; display: flex; justify-content: space-between; }
+    .no-data { display: flex; align-items: center; justify-content: center; height: 100%; color: #bbb; background: #fafafa; flex-direction: column; }
+</style>
 
-<h3>Device Dashboard</h3>
+<h3>Edge AI & LoRa Dashboard</h3>
 
-<table border="1" cellpadding="6">
-  <tr>
-    <th>UID</th>
-    <th>Status</th>
-    <th>FW</th>
-    <th>Last Seen</th>
-  </tr>
-
+<div class="device-grid">
   {% for d in devices %}
-  <tr>
-    <td><a href="/devices/{{ d.uid }}">{{ d.uid }}</a></td>
-    <td>{{ d.status }}</td>
-    <td>{{ d.fw_version }}</td>
-    <td>{{ d.last_seen }}</td>
-  </tr>
-  {% endfor %}
-</table>
+  <div class="device-card">
+    <div class="card-header">
+      <div>
+        <strong style="font-size: 1.1em;"><a href="/devices/{{ d.uid }}">{{ d.uid }}</a></strong>
+        <div style="font-size: 0.8em; color: #888;">{{ d.model.upper() }} | FW: {{ d.fw_version or '0.0.0' }}</div>
+      </div>
+      <span class="status-{{ d.status }}">● {{ d.status.upper() }}</span>
+    </div>
 
+    <div class="photo-wall">
+      {% if d.model == 'stm32-lora' %}
+        <div class="sensor-display">
+          <span style="font-size: 40px;">📡</span>
+          <div class="sensor-value">{{ d.sensor_data or '---' }}</div>
+          <div style="font-size: 0.85em; color: #7f8c8d;">
+            RSSI: {{ d.rssi or '--' }} | SNR: {{ d.snr or '--' }}
+          </div>
+        </div>
 
-<br>
-<h3>Recent Events</h3>
-<table border="1" cellpadding="6">
-  <tr>
-    <th>Time</th>
-    <th>UID</th>
-    <th>Event</th>
-    <th>Confidence</th>
-  </tr>
-  {% for e in events %}
-  <tr>
-    <td>
-      {{ friendly_time(e.timestamp) }}
-    </td>
-    <td>
-      {{ e.uid }}
-    </td>
-    <td>
-      {{ e.event_type }}
-    </td>
-    <td>
-      {% if e.confidence %}
-        {{ "%.2f"|format(e.confidence) }}
+      {% elif d.last_ai_image_url %}
+        <div class="photo-item hero">
+          <img src="{{ d.last_ai_image_url }}">
+          <div class="photo-tag">
+            <span>🎯 {{ d.last_ai_event }} ({{ "%.0f"|format(d.last_ai_confidence*100) if d.last_ai_confidence else '0' }}%)</span>
+            <span>🕒 {{ friendly_time(d.last_ai_time) }}</span>
+          </div>
+        </div>
+        <div class="history-strip">
+          {% for hist in d.ai_history[1:5] %}
+            <img src="{{ hist.url }}">
+          {% endfor %}
+        </div>
+
+      {% else %}
+        <div class="no-data">
+          <span style="font-size: 40px;">⏳</span>
+          <p>Waiting for first event...</p>
+        </div>
       {% endif %}
-    </td>
-  </tr>
+    </div>
+
+    <div style="padding: 12px 15px; font-size: 0.8em; color: #666; background: #fff; border-top: 1px solid #eee;">
+      📡 Last Seen: {{ friendly_time(d.last_seen) }}
+    </div>
+  </div>
   {% endfor %}
-</table>
+</div>
 
 {% endblock %}
