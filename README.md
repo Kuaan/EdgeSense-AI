@@ -50,6 +50,13 @@ ESP32 devices operate as an **Edge Compute Layer**, executing AI inference, rout
 ```
 
 ## Architecture Layers
+### GateWay 
+
+### Management UI — Web Control Plane
+<img width="1375" height="715" alt="image" src="https://github.com/user-attachments/assets/2200ae5b-eed1-44d7-951a-80362e282f33" />
+
+
+
 ### Lightweight Edge Gateway — Raspberry Pi 4B
 A self-built gateway stack, replacing heavy IoT platforms.
 
@@ -154,6 +161,8 @@ Deploy Firmware
 
 Flash binaries from:
 /firmware
+
+
 
 
 ### Project Vision
