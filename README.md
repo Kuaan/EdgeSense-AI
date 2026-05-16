@@ -48,7 +48,7 @@ ESP32 devices operate as an **Edge Compute Layer**, executing AI inference, rout
                                             │ Deep Edge     │
                                             └───────────────┘
 ```
-## 🏗️ Architecture Layers (Bottom-Up Infrastructure)
+## Architecture Layers (Bottom-Up Infrastructure)
 
 EdgeSense-AI maps physical-to-digital telemetry across three distinct operational layers, moving from deep field sensing up to the central orchestration control plane.
 
