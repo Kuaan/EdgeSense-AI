@@ -67,38 +67,37 @@ Designed to extend operational visibility into low-bandwidth, non-IP field envir
 
 ### 2. Edge Compute Layer — Embedded TinyML Engine
 ESP32 devices operate as active edge computers running on-device intelligence rather than acting as passive endpoints.
+<img width="603" height="670" alt="image" src="https://github.com/user-attachments/assets/ec28dfdd-c892-4907-ac22-1f4b8aa695ff" />
 
 * **ESP32-S3 — Edge AI Vision Node:**
     * **On-Device CNN Inference:** Executes fully quantized **INT8 FOMO / MobileNetV2** models for real-time object detection without cloud dependency.
     * **Hardware Optimization:** Dual-core task separation and optimized DMA camera pipeline to mitigate memory conflicts with the Wi-Fi stack.
     * **Resource-Constrained Efficiency:** Demonstrates high-performance TinyML constrained strictly within MCU hardware limits.
 
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/你的ML圖片ID_1.png" width="45%" alt="Edge Impulse FOMO Performance" />
-  <img src="https://github.com/user-attachments/assets/你的ML圖片ID_2.png" width="50%" alt="Epoch Loss Curve" />
-</p>
+
 
 ---
 
 ### 3. Lightweight Edge Gateway — Raspberry Pi 4B
 A self-built, localized gateway stack that replaces heavy industrial IoT frameworks.
+<img width="1093" height="564" alt="image" src="https://github.com/user-attachments/assets/077f3ad7-9720-4798-a27f-16268243aef7" />
+<img width="1407" height="508" alt="image" src="https://github.com/user-attachments/assets/c41494dc-929a-4762-afcb-992603d1f653" />
 
 * **Core Architecture:** Driven by an asynchronous **FastAPI control plane** and an **MQTT event backbone**.
 * **Infrastructure Services:** Manages dynamic device registries, telemetry storage, and the end-to-end **OTA firmware lifecycle**.
 * **Design Philosophy:** Lightweight, hackable, and highly portable—built entirely without the overhead of Kubernetes, cloud lock-in, or proprietary SDKs.
 
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/你的GatewayTerminal圖片ID.png" width="85%" alt="Gateway Terminal Control Plane" />
-</p>
+
 
 ---
 
 ### 4. Management UI — Web Control Plane
 The responsive, high-observability frontend dashboard providing direct human-in-the-loop orchestration over the entire edge network.
 
+<img width="1366" height="715" alt="image" src="https://github.com/user-attachments/assets/b8b42439-cbe4-4a3e-88c8-ad27da3deb60" />
+
 * **Unified Monitoring:** Real-time stream visualization of gateway hardware metrics and edge node telemetry.
 * **Lifecycle Control:** Centralized interface to trigger remote OTA firmware updates and manage active device deployment registries.
-<img width="1366" height="715" alt="image" src="https://github.com/user-attachments/assets/b8b42439-cbe4-4a3e-88c8-ad27da3deb60" />
 
 
 
