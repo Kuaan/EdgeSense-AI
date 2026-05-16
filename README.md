@@ -1,14 +1,28 @@
 # EdgeSense-AI
-## MCU-Scale Edge Computing & Device Orchestration Platform
-EdgeSense-AI is a **lightweight Edge Computing platform** that demonstrates how **real Edge AI infrastructure can be built using microcontrollers** instead of heavy cloud-dependent systems.
-The project showcases **Edge Computing running on ESP32-class MCUs**, coordinated by a self-built gateway designed for flexible Industrial IoT deployments.
-Unlike traditional IoT platforms relying on large frameworks or proprietary modules, EdgeSense-AI focuses on:
-- Minimal hardware footprint
-- Full system ownership
-- Deployable edge intelligence
-- Infrastructure-style device management
+## MCU-Scale Edge AI & Device Orchestration Platform
+
+A lightweight edge computing platform built on ESP32-class microcontrollers — demonstrating that distributed edge infrastructure doesn't require powerful hardware or cloud dependency.
+
 ---
 
+### ⚡ TL;DR (Project at a Glance)
+
+| Component | Technical Stack & Role |
+| :--- | :--- |
+| **Layer 4 — Management UI** | Real-time telemetry dashboard; remote OTA triggers; node health monitoring. |
+| **Layer 3 — Edge Gateway** | Self-built **FastAPI + MQTT** stack on Pi 4B; OTA lifecycle management, device registry. |
+| **Layer 2 — Edge Compute** | **ESP32-S3** running **INT8 FOMO / MobileNetV2** on-device inference; zero cloud dependency. |
+| **Layer 1 — Deep Edge** | **STM32F103 + FreeRTOS**; LoRa telemetry; fail-safe autonomous operation. |
+
+| Challenge | Solution |
+| :--- | :--- |
+| **ESP32 Camera + WiFi DMA conflict** | Memory tuning + dual-core task isolation |
+| **LoRa packet corruption** | Defensive JSON parsing for unreliable links |
+| **Dynamic device onboarding** | Plug-and-deploy registry with auto-registration |
+
+**Tech Stack:** `ESP32-S3` `STM32F103` `Raspberry Pi 4B` `FreeRTOS` `TinyML (FOMO)` `FastAPI` `MQTT` `LoRa` `OTA`
+
+---
 ## Core Idea
 
 > Can microcontrollers act as real edge computers instead of simple sensor nodes?
@@ -36,17 +50,17 @@ ESP32 devices operate as an **Edge Compute Layer**, executing AI inference, rout
                     └─────────┬──────────┘
                               │ MQTT / WiFi
         ┌─────────────────────┴─────────────────────┐
-        │                                           │
- ┌───────────────┐                          ┌───────────────┐
- │ ESP32-S3      │                          │ ESP32 Node    │
- │ Edge AI       │                          │ Edge Router   │
- │ Vision Compute│                          │ LoRa Gateway  │
- └───────────────┘                          └───────┬───────┘
-                                                    │ LoRa
-                                            ┌───────▼───────┐
-                                            │ STM32 Sensor  │
-                                            │ Deep Edge     │
-                                            └───────────────┘
+        │                     │                     │
+ ┌──────▼────────┐    ┌───────▼───────┐     ┌───────▼───────┐
+ │ ESP32-S3      │    │ ESP32 Node    │     │ ESP32 Node    │
+ │ Edge AI       │    │ Edge Router   │     │or Future Node │ 
+ │ Vision Compute│    │ LoRa Gateway  │     └───────────────┘
+ └───────────────┘    └───────┬───────┘
+                              │ LoRa
+                      ┌───────▼───────┐
+                      │ STM32 Sensor  │
+                      │ Deep Edge     │
+                      └───────────────┘
 ```
 ## Architecture Layers (Bottom-Up Infrastructure)
 
