@@ -110,7 +110,7 @@ Extends operational visibility into low-bandwidth, non-IP field environments.
 ESP32-S3 operates as an active edge computer running on-device intelligence, not a passive sensor endpoint.
 
 <img width="603" height="670" alt="image" src="https://github.com/user-attachments/assets/ec28dfdd-c892-4907-ac22-1f4b8aa695ff" />
-<img width="927" height="433" alt="image" src="https://github.com/user-attachments/assets/d29fb47a-2284-4983-8130-1779867a4211" />
+<img width="627" height="288" alt="image" src="https://github.com/user-attachments/assets/d29fb47a-2284-4983-8130-1779867a4211" />
 
 - **On-Device CNN Inference:** Fully quantized INT8 FOMO / MobileNetV2 for real-time object detection, zero cloud dependency
 - **Hardware Optimization:** Dual-core task separation + optimized DMA camera pipeline to eliminate WiFi stack memory conflicts
