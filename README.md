@@ -67,6 +67,7 @@ Designed to extend operational visibility into low-bandwidth, non-IP field envir
 
 ### 2. Edge Compute Layer — Embedded TinyML Engine
 ESP32 devices operate as active edge computers running on-device intelligence rather than acting as passive endpoints.
+
 <img width="603" height="670" alt="image" src="https://github.com/user-attachments/assets/ec28dfdd-c892-4907-ac22-1f4b8aa695ff" />
 
 * **ESP32-S3 — Edge AI Vision Node:**
