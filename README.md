@@ -69,6 +69,8 @@ Designed to extend operational visibility into low-bandwidth, non-IP field envir
 ESP32 devices operate as active edge computers running on-device intelligence rather than acting as passive endpoints.
 
 <img width="603" height="670" alt="image" src="https://github.com/user-attachments/assets/ec28dfdd-c892-4907-ac22-1f4b8aa695ff" />
+<img width="927" height="433" alt="image" src="https://github.com/user-attachments/assets/d29fb47a-2284-4983-8130-1779867a4211" />
+
 
 * **ESP32-S3 — Edge AI Vision Node:**
     * **On-Device CNN Inference:** Executes fully quantized **INT8 FOMO / MobileNetV2** models for real-time object detection without cloud dependency.
@@ -93,9 +95,11 @@ A self-built, localized gateway stack that replaces heavy industrial IoT framewo
 ---
 
 ### 4. Management UI — Web Control Plane
-The responsive, high-observability frontend dashboard providing direct human-in-the-loop orchestration over the entire edge network.
+The responsive, high-observability frontend dashboard provides direct human-in-the-loop orchestration over the entire edge network.
 
 <img width="1366" height="715" alt="image" src="https://github.com/user-attachments/assets/b8b42439-cbe4-4a3e-88c8-ad27da3deb60" />
+<img width="1282" height="359" alt="image" src="https://github.com/user-attachments/assets/f55dcadb-e209-42dd-aec0-bd8f16b5e9ac" />
+
 
 * **Unified Monitoring:** Real-time stream visualization of gateway hardware metrics and edge node telemetry.
 * **Lifecycle Control:** Centralized interface to trigger remote OTA firmware updates and manage active device deployment registries.
