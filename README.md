@@ -86,22 +86,21 @@ Optimized DMA camera pipeline
 
 - Demonstrates TinyML on resource-constrained MCU hardware.
 
-ESP32 Node — Edge Network Router
-MQTT client node
-WiFi ↔ LoRa bridge
-Protocol translation layer
-Downstream device aggregation
 
-Extends gateway reach beyond WiFi environments.
 
-### Deep Edge Layer — STM32F103
-Ultra-low-level sensing layer.
+### Deep Edge Layer — LoRa Sensor Topology
 
-FreeRTOS scheduler
-Long-range LoRa telemetry
-Resilient low-bandwidth operation
+Designed to extend operational visibility into low-bandwidth, non-IP field environments.
 
-Represents field-deployed sensor endpoints.
+* **ESP32 Edge Router (The Bridge):**
+    * **Protocol Translation:** Acts as an autonomous WiFi ↔ LoRa multi-hop bridge.
+    * **Data Aggregation:** Collects telemetry from downstream nodes and routes it to the MQTT control plane.
+    * **Coverage Extension:** Extends system reach far beyond standard WiFi boundaries.
+
+* **STM32F103 Node (The Endpoint):**
+    * **Deterministic OS:** Driven by **FreeRTOS** for time-critical sensor sampling.
+    * **Resilient Telemetry:** Uses low-overhead LoRa transmission optimized for unstable links.
+    * **Fail-Safe Design:** Operates autonomously at the field perimeter, even during backhaul disconnects.
 
 ---
 # Key Capabilities
