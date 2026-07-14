@@ -6,6 +6,7 @@ A lightweight edge computing platform built on ESP32-class microcontrollers — 
 ---
 ## Stack
 `ESP32-S3` `STM32F103` `Raspberry Pi 4B` `FreeRTOS` `TinyML` `FastAPI` `MQTT` `LoRa` `OTA`
+
 ---
 ## Core Idea
 
