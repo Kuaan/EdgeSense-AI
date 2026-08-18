@@ -3,7 +3,6 @@
 
 A lightweight edge computing platform built on ESP32-class microcontrollers — proving that distributed edge infrastructure doesn't require powerful hardware or cloud dependency.
 
-
 ---
 ## Stack
 `ESP32-S3` `STM32F103` `Raspberry Pi 4B` `FreeRTOS` `TinyML` `FastAPI` `MQTT` `LoRa` `OTA`
