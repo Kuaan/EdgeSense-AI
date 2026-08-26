@@ -1,6 +1,5 @@
 # EdgeSense-AI
 **MCU-Scale Edge AI & Device Orchestration Platform**
-
 A lightweight edge computing platform built on ESP32-class microcontrollers — proving that distributed edge infrastructure doesn't require powerful hardware or cloud dependency.
 ---
 ## Stack
